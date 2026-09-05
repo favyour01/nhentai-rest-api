@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nhentai REST API v2</title>
+  <meta name="description" content="Unofficial nhentai REST API - Fast, free, and easy to use. Search, browse, and fetch doujin data programmatically.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+</head>
+<body>
+  <div class="bg-animation"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-icon">📚</span>
+        <span class="logo-text">nhentai<span class="accent">API</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/docs" class="nav-link">Documentation</a>
+        <a href="#features" class="nav-link">Features</a>
+        <a href="#demo" class="nav-link">Demo</a>
+        <a href="/docs" class="nav-btn">Get Started →</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <header class="hero">
+    <div class="hero-content">
+      <div class="badge">v2.0 — Rombak Total</div>
+      <h1>Unofficial <span class="gradient-text">nhentai</span> REST API</h1>
+      <p class="hero-subtitle">
+        Fast, free, and developer-friendly REST API for accessing nhentai doujin data.
+        Search by title, tags, artist, language, and more. No API key required.
+      </p>
+      <div class="hero-buttons">
+        <a href="/docs" class="btn btn-primary">View Documentation</a>
+        <a href="/api/v2/stats" class="btn btn-secondary">Check Stats</a>
+      </div>
+      <div class="hero-stats">
+        <div class="stat">
+          <span class="stat-number">678K+</span>
+          <span class="stat-label">Doujins</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">RESTful</span>
+          <span class="stat-label">API Design</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number">Free</span>
+          <span class="stat-label">No API Key</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-code">
+      <div class="code-window">
+        <div class="code-header">
+          <span class="dot red"></span>
+          <span class="dot yellow"></span>
+          <span class="dot green"></span>
+          <span class="code-title">GET /api/v2/search?q=girls</span>
+        </div>
+        <pre class="code-body"><span class="keyword">curl</span> <span class="string">"https://your-domain.vercel.app/api/v2/search?q=girls&limit=1"</span>
+
+<span class="comment">// Response:</span>
+{
+  <span class="key">"success"</span>: <span class="boolean">true</span>,
+  <span class="key">"data"</span>: [{
+    <span class="key">"id"</span>: <span class="number">12345</span>,
+    <span class="key">"en_title"</span>: <span class="string">"..."</span>,
+    <span class="key">"jp_title"</span>: <span class="string">"..."</span>,
+    <span class="key">"language"</span>: <span class="string">"english"</span>,
+    <span class="key">"artist"</span>: <span class="string">"..."</span>,
+    <span class="key">"tags"</span>: [<span class="string">"..."</span>],
+    <span class="key">"pages"</span>: <span class="number">20</span>,
+    <span class="key">"upload_date"</span>: <span class="string">"2023-01-15T..."</span>
+  }],
+  <span class="key">"pagination"</span>: {
+    <span class="key">"page"</span>: <span class="number">1</span>,
+    <span class="key">"total_pages"</span>: <span class="number">5234</span>
+  }
+}</pre>
+      </div>
+    </div>
+  </header>
+
+  <!-- Features -->
+  <section id="features" class="features">
+    <h2>Features</h2>
+    <p class="section-sub">Everything you need to build with nhentai data</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🔍</div>
+        <h3>Full-Text Search</h3>
+        <p>Search doujins by title, tags, artist, category, parody, and character with advanced filtering.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🎲</div>
+        <h3>Random Endpoint</h3>
+        <p>Get a random doujin instantly. Perfect for discovery features and fun integrations.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Paginated Results</h3>
+        <p>All list endpoints support pagination with configurable limits up to 100 items per page.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">⚡</div>
+        <h3>Fast Response</h3>
+        <p>SQLite with optimized queries delivers sub-100ms response times for most endpoints.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🌐</div>
+        <h3>CORS Enabled</h3>
+        <p>Cross-origin requests supported out of the box. Use directly from browser-side apps.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔓</div>
+        <h3>No Auth Required</h3>
+        <p>No API keys, no registration, no rate limit headaches. Just make requests and go.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Demo -->
+  <section id="demo" class="demo">
+    <h2>Live Demo</h2>
+    <p class="section-sub">Try the API right now</p>
+    <div class="demo-container">
+      <div class="demo-input">
+        <input type="text" id="searchInput" placeholder="Search doujins... (e.g., 'school', 'manga')" />
+        <button onclick="runSearch()" class="btn btn-primary">Search</button>
+      </div>
+      <div class="demo-result" id="demoResult">
+        <div class="demo-placeholder">
+          <span>👆 Type something and hit Search to see results</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Endpoints Preview -->
+  <section class="endpoints">
+    <h2>Available Endpoints</h2>
+    <p class="section-sub">RESTful endpoints ready to use</p>
+    <div class="endpoints-list">
+      <div class="endpoint-item">
+        <span class="method get">GET</span>
+        <code>/api/v2/:id</code>
+        <span class="endpoint-desc">Get doujin by ID</span>
+      </div>
+      <div class="endpoint-item">
+        <span class="method get">GET</span>
+        <code>/api/v2/search</code>
+        <span class="endpoint-desc">Search with filters</span>
+      </div>
+      <div class="endpoint-item">
+        <span class="method get">GET</span>
+        <code>/api/v2/random</code>
+        <span class="endpoint-desc">Random doujin</span>
+      </div>
+      <div class="endpoint-item">
+        <span class="method get">GET</span>
+        <code>/api/v2/tags</code>
+        <span class="endpoint-desc">List all tags</span>
+      </div>
+      <div class="endpoint-item">
+        <span class="method get">GET</span>
+        <code>/api/v2/artists</code>
+        <span class="endpoint-desc">List all artists</span>
+      </div>
+      <div class="endpoint-item">
+        <span class="method get">GET</span>
+        <code>/api/v2/stats</code>
+        <span class="endpoint-desc">Database statistics</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="logo-icon">📚</span>
+        <span>nhentai REST API v2</span>
+      </div>
+      <div class="footer-links">
+        <a href="/docs">Documentation</a>
+        <a href="/api/v2/stats">Stats</a>
+        <a href="/api/health">Health</a>
+      </div>
+      <p class="footer-note">
+        Unofficial API. Not affiliated with nhentai. For educational purposes only.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    async function runSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      const resultDiv = document.getElementById('demoResult');
+      if (!q) return;
+
+      resultDiv.innerHTML = '<div class="demo-placeholder"><span>⏳ Loading...</span></div>';
+
+      try {
+        const res = await fetch(`/api/v2/search?q=${encodeURIComponent(q)}&limit=5`);
+        const json = await res.json();
+
+        if (!json.success || !json.data.length) {
+          resultDiv.innerHTML = '<div class="demo-placeholder"><span>No results found</span></div>';
+          return;
+        }
+
+        let html = '<div class="results-list">';
+        json.data.forEach(item => {
+          html += `
+            <div class="result-item">
+              <div class="result-id">#${item.id}</div>
+              <div class="result-info">
+                <div class="result-title">${escapeHtml(item.clean_title || item.en_title || item.jp_title || 'Untitled')}</div>
+                <div class="result-meta">
+                  <span>🎨 ${escapeHtml(item.artist || 'Unknown')}</span>
+                  <span>🌐 ${escapeHtml(item.language || 'N/A')}</span>
+                  <span>📄 ${item.pages || 0} pages</span>
+                  <span>📅 ${item.upload_date ? item.upload_date.split('T')[0] : 'N/A'}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        html += '</div>';
+        html += `<div class="results-footer">Found ${json.pagination.total.toLocaleString()} results</div>`;
+        resultDiv.innerHTML = html;
+      } catch (err) {
+        resultDiv.innerHTML = `<div class="demo-placeholder"><span>❌ Error: ${err.message}</span></div>`;
+      }
+    }
+
+    function escapeHtml(str) {
+      const div = document.createElement('div');
+      div.textContent = str;
+      return div.innerHTML;
+    }
+
+    document.getElementById('searchInput').addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') runSearch();
+    });
+  </script>
+</body>
+</html>

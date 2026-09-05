@@ -1,0 +1,22 @@
+{
+  "name": "nhentai-rest-api",
+  "version": "2.0.0",
+  "description": "Unofficial nhentai REST API v2 - Rombak total dengan landing page & dokumentasi",
+  "main": "src/index.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "node --watch src/index.js",
+    "build-db": "node src/lib/build-db.js",
+    "prestart": "node src/lib/build-db.js"
+  },
+  "engines": {
+    "node": ">=22.5.0"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.0",
+    "express-rate-limit": "^7.4.0",
+    "helmet": "^7.1.0"
+  }
+}

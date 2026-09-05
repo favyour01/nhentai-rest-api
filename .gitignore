@@ -1,0 +1,25 @@
+# Original repo files (keep database parts only)
+/by_month/
+/backend/
+backend/
+merge_database.py
+*.py
+!api/data/merge_db.py
+
+# Node modules
+node_modules/
+api/node_modules/
+
+# Env files
+.env
+.env.local
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+
+# Don't ignore database parts in api/data
+!api/data/database.part*
+!api/data/database.db

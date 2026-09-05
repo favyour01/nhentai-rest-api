@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Documentation — nhentai REST API v2</title>
+  <meta name="description" content="Complete API documentation for nhentai REST API v2. Search, browse, and fetch doujin data.">
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/docs.css">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>📚</text></svg>">
+</head>
+<body class="docs-body">
+  <div class="bg-animation"></div>
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="logo">
+        <span class="logo-icon">📚</span>
+        <span class="logo-text">nhentai<span class="accent">API</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="/docs" class="nav-link active">Documentation</a>
+        <a href="/#features" class="nav-link">Features</a>
+        <a href="/#demo" class="nav-link">Demo</a>
+        <a href="/" class="nav-btn">← Back Home</a>
+      </div>
+    </div>
+  </nav>
+
+  <div class="docs-container">
+    <!-- Sidebar -->
+    <aside class="docs-sidebar">
+      <div class="sidebar-content">
+        <h4>Getting Started</h4>
+        <a href="#intro" class="sidebar-link">Introduction</a>
+        <a href="#base-url" class="sidebar-link">Base URL</a>
+        <a href="#rate-limits" class="sidebar-link">Rate Limits</a>
+        <a href="#response-format" class="sidebar-link">Response Format</a>
+
+        <h4>Endpoints</h4>
+        <a href="#get-by-id" class="sidebar-link">GET /api/v2/:id</a>
+        <a href="#search" class="sidebar-link">GET /api/v2/search</a>
+        <a href="#random" class="sidebar-link">GET /api/v2/random</a>
+        <a href="#tags" class="sidebar-link">GET /api/v2/tags</a>
+        <a href="#artists" class="sidebar-link">GET /api/v2/artists</a>
+        <a href="#stats" class="sidebar-link">GET /api/v2/stats</a>
+        <a href="#health" class="sidebar-link">GET /api/health</a>
+
+        <h4>Examples</h4>
+        <a href="#examples-js" class="sidebar-link">JavaScript</a>
+        <a href="#examples-python" class="sidebar-link">Python</a>
+        <a href="#examples-curl" class="sidebar-link">cURL</a>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="docs-main">
+      <div class="docs-content">
+        <h1>API Documentation</h1>
+        <p class="docs-lead">
+          Complete reference for the nhentai REST API v2. All endpoints return JSON and require no authentication.
+        </p>
+
+        <!-- Introduction -->
+        <section id="intro">
+          <h2>Introduction</h2>
+          <p>
+            This is an unofficial REST API for accessing nhentai doujin data. The API is read-only and serves data
+            from a local SQLite database containing over <strong>678,000 doujins</strong> spanning from 2014 to 2026.
+          </p>
+          <div class="info-box">
+            <strong>⚠️ Disclaimer:</strong> This API is unofficial and not affiliated with nhentai.net.
+            Data is provided for educational and research purposes only.
+          </div>
+        </section>
+
+        <!-- Base URL -->
+        <section id="base-url">
+          <h2>Base URL</h2>
+          <div class="code-block">
+            <code>https://your-domain.vercel.app</code>
+          </div>
+          <p>
+            All API endpoints are prefixed with <code>/api/v2</code>. An alias <code>/v2</code> is also available.
+            Replace the base URL with your deployed Vercel domain.
+          </p>
+        </section>
+
+        <!-- Rate Limits -->
+        <section id="rate-limits">
+          <h2>Rate Limits</h2>
+          <p>To ensure fair usage, the API is rate limited:</p>
+          <ul>
+            <li><strong>300 requests</strong> per 15-minute window per IP</li>
+            <li>Rate limit headers are included in responses</li>
+            <li>Exceeding the limit returns <code>429 Too Many Requests</code></li>
+          </ul>
+        </section>
+
+        <!-- Response Format -->
+        <section id="response-format">
+          <h2>Response Format</h2>
+          <p>All responses follow a consistent JSON structure:</p>
+          <div class="code-block">
+<pre>{
+  "success": true,
+  "data": { ... },
+  "pagination": { ... }  // Only for list endpoints
+}</pre>
+          </div>
+          <p>Error responses:</p>
+          <div class="code-block">
+<pre>{
+  "success": false,
+  "error": "Description of what went wrong"
+}</pre>
+          </div>
+        </section>
+
+        <!-- Endpoints -->
+        <h1 class="endpoints-title">Endpoints</h1>
+
+        <!-- GET /:id -->
+        <section id="get-by-id" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/:id</code>
+          </div>
+          <p>Get detailed information about a specific doujin by its ID.</p>
+
+          <h4>Parameters</h4>
+          <table class="params-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>id</code></td><td>integer</td><td>Doujin ID (path parameter)</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Example Response</h4>
+          <div class="code-block">
+<pre>{
+  "success": true,
+  "data": {
+    "id": 12345,
+    "en_title": "English Title",
+    "jp_title": "Japanese Title",
+    "clean_title": "Clean Title",
+    "language": "english",
+    "artist": "Artist Name",
+    "group_name": "Group Name",
+    "category": "Manga",
+    "parody": "Original Work",
+    "character": "Character Name",
+    "tags": ["tag1", "tag2", "tag3"],
+    "pages": 20,
+    "upload_date": "2023-01-15T10:30:00.000Z",
+    "formatted_date": "2023-01-15 10:30:00",
+    "scraped_date": "2024-01-01 00:00:00"
+  }
+}</pre>
+          </div>
+        </section>
+
+        <!-- Search -->
+        <section id="search" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/search</code>
+          </div>
+          <p>Search doujins with various filters. All query parameters are optional.</p>
+
+          <h4>Query Parameters</h4>
+          <table class="params-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>q</code></td><td>string</td><td>Search term (matches title fields)</td></tr>
+              <tr><td><code>lang</code></td><td>string</td><td>Filter by language (e.g., "english", "japanese")</td></tr>
+              <tr><td><code>artist</code></td><td>string</td><td>Filter by artist name</td></tr>
+              <tr><td><code>tags</code></td><td>string</td><td>Filter by tag</td></tr>
+              <tr><td><code>category</code></td><td>string</td><td>Filter by category</td></tr>
+              <tr><td><code>parody</code></td><td>string</td><td>Filter by parody/source</td></tr>
+              <tr><td><code>character</code></td><td>string</td><td>Filter by character</td></tr>
+              <tr><td><code>page</code></td><td>integer</td><td>Page number (default: 1)</td></tr>
+              <tr><td><code>limit</code></td><td>integer</td><td>Items per page (default: 20, max: 100)</td></tr>
+              <tr><td><code>sort</code></td><td>string</td><td>Sort order: <code>relevance</code>, <code>newest</code>, <code>oldest</code>, <code>pages_desc</code>, <code>pages_asc</code></td></tr>
+            </tbody>
+          </table>
+
+          <h4>Example Request</h4>
+          <div class="code-block">
+            <code>GET /api/v2/search?q=school&lang=english&page=1&limit=10&sort=newest</code>
+          </div>
+
+          <h4>Example Response</h4>
+          <div class="code-block">
+<pre>{
+  "success": true,
+  "data": [
+    { "id": 12345, "en_title": "...", "tags": [...], ... },
+    { "id": 12346, "en_title": "...", "tags": [...], ... }
+  ],
+  "pagination": {
+    "page": 1,
+    "limit": 10,
+    "total": 5234,
+    "total_pages": 524,
+    "has_next": true,
+    "has_prev": false
+  }
+}</pre>
+          </div>
+        </section>
+
+        <!-- Random -->
+        <section id="random" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/random</code>
+          </div>
+          <p>Get a random doujin from the database.</p>
+
+          <h4>Example Response</h4>
+          <div class="code-block">
+<pre>{
+  "success": true,
+  "data": {
+    "id": 99999,
+    "en_title": "Random Doujin",
+    "tags": [...],
+    ...
+  }
+}</pre>
+          </div>
+        </section>
+
+        <!-- Tags -->
+        <section id="tags" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/tags</code>
+          </div>
+          <p>Get a list of all unique tags with usage counts.</p>
+
+          <h4>Query Parameters</h4>
+          <table class="params-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>q</code></td><td>string</td><td>Filter tags by name</td></tr>
+              <tr><td><code>limit</code></td><td>integer</td><td>Items per page (default: 50, max: 200)</td></tr>
+              <tr><td><code>page</code></td><td>integer</td><td>Page number (default: 1)</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Example Response</h4>
+          <div class="code-block">
+<pre>{
+  "success": true,
+  "data": [
+    { "name": "tag-name", "count": 12345 },
+    { "name": "another-tag", "count": 9876 }
+  ],
+  "pagination": { "page": 1, "total": 50000, ... }
+}</pre>
+          </div>
+        </section>
+
+        <!-- Artists -->
+        <section id="artists" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/artists</code>
+          </div>
+          <p>Get a list of all unique artists with doujin counts.</p>
+
+          <h4>Query Parameters</h4>
+          <table class="params-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>q</code></td><td>string</td><td>Filter artists by name</td></tr>
+              <tr><td><code>limit</code></td><td>integer</td><td>Items per page (default: 50, max: 200)</td></tr>
+              <tr><td><code>page</code></td><td>integer</td><td>Page number (default: 1)</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+        <!-- Stats -->
+        <section id="stats" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/stats</code>
+          </div>
+          <p>Get database statistics including total counts, languages, and categories.</p>
+
+          <h4>Example Response</h4>
+          <div class="code-block">
+<pre>{
+  "success": true,
+  "data": {
+    "total_doujins": 678517,
+    "languages": [
+      { "LANGUAGE": "japanese", "count": 400000 },
+      { "LANGUAGE": "english", "count": 150000 }
+    ],
+    "categories": [
+      { "CATEGORY": "Manga", "count": 300000 }
+    ],
+    "date_range": {
+      "earliest": "2014-06-28T21:12:16.000Z",
+      "latest": "2026-09-04T23:36:37.000Z"
+    }
+  }
+}</pre>
+          </div>
+        </section>
+
+        <!-- Health -->
+        <section id="health" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/health</code>
+          </div>
+          <p>Health check endpoint to verify API status.</p>
+
+          <h4>Example Response</h4>
+          <div class="code-block">
+<pre>{
+  "status": "ok",
+  "timestamp": "2026-09-05T12:00:00.000Z",
+  "version": "2.0.0"
+}</pre>
+          </div>
+        </section>
+
+        <!-- Code Examples -->
+        <h1 class="endpoints-title">Code Examples</h1>
+
+        <section id="examples-js" class="endpoint-section">
+          <h3>JavaScript (Fetch)</h3>
+          <div class="code-block">
+<pre><span class="comment">// Search for doujins</span>
+<span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">'/api/v2/search?q=school&limit=5'</span>);
+<span class="keyword">const</span> json = <span class="keyword">await</span> res.json();
+console.log(json.data);
+
+<span class="comment">// Get doujin by ID</span>
+<span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">'/api/v2/12345'</span>);
+<span class="keyword">const</span> json = <span class="keyword">await</span> res.json();
+console.log(json.data.clean_title);
+
+<span class="comment">// Get random doujin</span>
+<span class="keyword">const</span> res = <span class="keyword">await</span> fetch(<span class="string">'/api/v2/random'</span>);
+<span class="keyword">const</span> json = <span class="keyword">await</span> res.json();
+console.log(json.data);</pre>
+          </div>
+        </section>
+
+        <section id="examples-python" class="endpoint-section">
+          <h3>Python (requests)</h3>
+          <div class="code-block">
+<pre><span class="keyword">import</span> requests
+
+<span class="comment"># Search for doujins</span>
+res = requests.get(<span class="string">"https://your-domain.vercel.app/api/v2/search"</span>, params={
+    <span class="string">"q"</span>: <span class="string">"school"</span>,
+    <span class="string">"lang"</span>: <span class="string">"english"</span>,
+    <span class="string">"limit"</span>: <span class="string">"10"</span>
+})
+data = res.json()
+<span class="keyword">print</span>(data[<span class="string">"data"</span>])
+
+<span class="comment"># Get by ID</span>
+res = requests.get(<span class="string">"https://your-domain.vercel.app/api/v2/12345"</span>)
+<span class="keyword">print</span>(res.json()[<span class="string">"data"</span>])</pre>
+          </div>
+        </section>
+
+        <section id="examples-curl" class="endpoint-section">
+          <h3>cURL</h3>
+          <div class="code-block">
+<pre><span class="comment"># Search</span>
+curl <span class="string">"https://your-domain.vercel.app/api/v2/search?q=girls&limit=5"</span>
+
+<span class="comment"># Get by ID</span>
+curl <span class="string">"https://your-domain.vercel.app/api/v2/12345"</span>
+
+<span class="comment"># Random</span>
+curl <span class="string">"https://your-domain.vercel.app/api/v2/random"</span>
+
+<span class="comment"># Stats</span>
+curl <span class="string">"https://your-domain.vercel.app/api/v2/stats"</span></pre>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-brand">
+        <span class="logo-icon">📚</span>
+        <span>nhentai REST API v2</span>
+      </div>
+      <p class="footer-note">
+        Unofficial API. Not affiliated with nhentai. For educational purposes only.
+      </p>
+    </div>
+  </footer>
+
+  <script>
+    // Smooth scroll for sidebar links
+    document.querySelectorAll('.sidebar-link').forEach(link => {
+      link.addEventListener('click', (e) => {
+        e.preventDefault();
+        const target = document.querySelector(link.getAttribute('href'));
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      });
+    });
+  </script>
+</body>
+</html>
