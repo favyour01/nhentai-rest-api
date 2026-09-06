@@ -20,6 +20,8 @@ api/node_modules/
 # OS
 .DS_Store
 
-# Don't ignore database parts in api/data
+# Don't ignore database parts and db in api/data
 !api/data/database.part*
 !api/data/database.db
+!api/data/database.db-shm
+!api/data/database.db-wal

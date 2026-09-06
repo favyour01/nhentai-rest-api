@@ -1,21 +1,17 @@
 import { DatabaseSync } from 'node:sqlite';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-// Database path - di Vercel, file ada di root project
-const DB_PATH = process.env.VERCEL
-  ? join(process.cwd(), '..', 'data', 'database.db')
-  : join(__dirname, '..', '..', 'data', 'database.db');
+import { ensureDb } from './build-db.js';
 
 let db;
 
 export function getDb() {
   if (!db) {
-    db = new DatabaseSync(DB_PATH);
-    db.exec('PRAGMA journal_mode = WAL');
+    const dbPath = ensureDb();
+    if (!dbPath) {
+      throw new Error('Database not available');
+    }
+    db = new DatabaseSync(dbPath);
+    db.exec('PRAGMA journal_mode = OFF');
+    db.exec('PRAGMA synchronous = OFF');
     db.exec('PRAGMA cache_size = -64000'); // 64MB cache
   }
   return db;

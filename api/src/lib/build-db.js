@@ -4,29 +4,38 @@ import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
+
+// Di Vercel, simpan merged db di /tmp (writable)
 const DATA_DIR = join(__dirname, '..', '..', 'data');
-const DB_PATH = join(DATA_DIR, 'database.db');
+const DB_PATH = process.env.VERCEL
+  ? '/tmp/database.db'
+  : join(DATA_DIR, 'database.db');
 
-// Check if database already exists
-if (existsSync(DB_PATH)) {
-  console.log('✅ Database already exists, skipping merge.');
-  process.exit(0);
+export function ensureDb() {
+  // Jika sudah ada, skip
+  if (existsSync(DB_PATH)) {
+    return DB_PATH;
+  }
+
+  // Tentukan sumber parts
+  const partsDir = process.env.VERCEL ? DATA_DIR : DATA_DIR;
+  const partFiles = readdirSync(partsDir)
+    .filter(f => f.startsWith('database.part'))
+    .sort((a, b) => parseInt(a.split('part')[-1]) - parseInt(b.split('part')[-1]));
+
+  if (partFiles.length === 0) {
+    console.log('⚠️ No database parts found.');
+    return null;
+  }
+
+  console.log(`🔧 Merging ${partFiles.length} database parts...`);
+
+  const chunks = partFiles.map(f => readFileSync(join(partsDir, f)));
+  const merged = Buffer.concat(chunks);
+  writeFileSync(DB_PATH, merged);
+
+  console.log(`✅ Database merged: ${(merged.length / 1024 / 1024).toFixed(1)} MB`);
+  return DB_PATH;
 }
 
-// Check for part files
-const partFiles = readdirSync(DATA_DIR)
-  .filter(f => f.startsWith('database.part'))
-  .sort((a, b) => parseInt(a.split('part')[-1]) - parseInt(b.split('part')[-1]));
-
-if (partFiles.length === 0) {
-  console.log('⚠️ No database parts found. Database needs to be provided separately.');
-  process.exit(0);
-}
-
-console.log(`🔧 Merging ${partFiles.length} database parts...`);
-
-const chunks = partFiles.map(f => readFileSync(join(DATA_DIR, f)));
-const merged = Buffer.concat(chunks);
-writeFileSync(DB_PATH, merged);
-
-console.log(`✅ Database merged: ${(merged.length / 1024 / 1024).toFixed(1)} MB`);
+export { DB_PATH };

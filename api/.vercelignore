@@ -1,0 +1,12 @@
+# Exclude merged database from deployment (parts are merged at runtime)
+data/database.db
+data/database.db-shm
+data/database.db-wal
+
+# Node modules (installed by Vercel)
+node_modules/
+
+# Dev files
+.env
+.env.local
+*.log

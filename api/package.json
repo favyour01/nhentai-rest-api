@@ -6,9 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/index.js",
-    "dev": "node --watch src/index.js",
-    "build-db": "node src/lib/build-db.js",
-    "prestart": "node src/lib/build-db.js"
+    "dev": "node --watch src/index.js"
   },
   "engines": {
     "node": ">=22.5.0"

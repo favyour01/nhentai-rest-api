@@ -4,5 +4,9 @@ node_modules/
 *.log
 .DS_Store
 data/database.db
-data/database.part*
+data/database.db-shm
+data/database.db-wal
+!data/database.part*
 !data/.gitkeep
+
+.vercel
