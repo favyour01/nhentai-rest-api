@@ -20,8 +20,11 @@ api/node_modules/
 # OS
 .DS_Store
 
-# Don't ignore database parts (db is rebuilt from parts on deploy)
-!api/data/database.part*
+# Ignore database files (too large for Vercel functions)
+api/data/database.part*
+api/data/database.db
+api/data/database.db-shm
+api/data/database.db-wal
 
 .vercel
 .env*
