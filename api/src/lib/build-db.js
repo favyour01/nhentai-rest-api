@@ -30,40 +30,48 @@ export function ensureDb() {
   let partsDir = null;
 
   for (const dir of possibleDirs) {
-    if (!existsSync(dir)) continue;
-    const files = readdirSync(dir)
-      .filter(f => f.startsWith('database.part'))
-      .sort((a, b) => {
-        const numA = parseInt(a.replace('database.part', ''));
-        const numB = parseInt(b.replace('database.part', ''));
-        return numA - numB;
-      });
-    if (files.length > 0) {
-      partFiles = files;
-      partsDir = dir;
-      break;
+    try {
+      if (!existsSync(dir)) continue;
+      const files = readdirSync(dir)
+        .filter(f => f.match(/^database\.part\d+$/))
+        .sort((a, b) => {
+          const numA = parseInt(a.replace('database.part', ''));
+          const numB = parseInt(b.replace('database.part', ''));
+          return numA - numB;
+        });
+      if (files.length > 0) {
+        partFiles = files;
+        partsDir = dir;
+        break;
+      }
+    } catch (e) {
+      // Ignore errors
     }
   }
 
   if (partFiles.length === 0) {
-    console.log('⚠️ No database parts found. Searched in:', possibleDirs);
+    console.log('⚠️ No database parts found. Live-only mode.');
     return null;
   }
 
   console.log(`🔧 Merging ${partFiles.length} database parts from ${partsDir}...`);
-  const chunks = partFiles.map(f => readFileSync(join(partsDir, f)));
-  const merged = Buffer.concat(chunks);
+  try {
+    const chunks = partFiles.map(f => readFileSync(join(partsDir, f)));
+    const merged = Buffer.concat(chunks);
 
-  // Pastikan direktori tujuan ada
-  const dbDir = dirname(DB_PATH);
-  if (!existsSync(dbDir)) {
-    mkdirSync(dbDir, { recursive: true });
+    // Pastikan direktori tujuan ada
+    const dbDir = dirname(DB_PATH);
+    if (!existsSync(dbDir)) {
+      mkdirSync(dbDir, { recursive: true });
+    }
+
+    writeFileSync(DB_PATH, merged);
+    console.log(`✅ Database merged: ${(merged.length / 1024 / 1024).toFixed(1)} MB`);
+    return DB_PATH;
+  } catch (e) {
+    console.error('❌ Error merging database:', e.message);
+    return null;
   }
-
-  writeFileSync(DB_PATH, merged);
-
-  console.log(`✅ Database merged: ${(merged.length / 1024 / 1024).toFixed(1)} MB`);
-  return DB_PATH;
 }
 
 export { DB_PATH };

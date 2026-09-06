@@ -7,7 +7,8 @@ export function getDb() {
   if (!db) {
     const dbPath = ensureDb();
     if (!dbPath) {
-      throw new Error('Database not available');
+      // Return null jika tidak ada database (live-only mode)
+      return null;
     }
     db = new DatabaseSync(dbPath);
     db.exec('PRAGMA journal_mode = OFF');
