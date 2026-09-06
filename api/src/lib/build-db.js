@@ -17,24 +17,49 @@ export function ensureDb() {
     return DB_PATH;
   }
 
-  // Tentukan sumber parts
-  const partsDir = DATA_DIR;
-  const partFiles = readdirSync(partsDir)
-    .filter(f => f.startsWith('database.part'))
-    .sort((a, b) => {
-      const numA = parseInt(a.replace('database.part', ''));
-      const numB = parseInt(b.replace('database.part', ''));
-      return numA - numB;
-    });
+  // Cari parts di beberapa lokasi possible
+  const possibleDirs = [
+    DATA_DIR,
+    join(__dirname, '..', '..', '..', 'data'),
+    join(process.cwd(), 'data'),
+    '/var/task/api/data',
+    '/var/task/data',
+  ];
+
+  let partFiles = [];
+  let partsDir = null;
+
+  for (const dir of possibleDirs) {
+    if (!existsSync(dir)) continue;
+    const files = readdirSync(dir)
+      .filter(f => f.startsWith('database.part'))
+      .sort((a, b) => {
+        const numA = parseInt(a.replace('database.part', ''));
+        const numB = parseInt(b.replace('database.part', ''));
+        return numA - numB;
+      });
+    if (files.length > 0) {
+      partFiles = files;
+      partsDir = dir;
+      break;
+    }
+  }
 
   if (partFiles.length === 0) {
-    console.log('⚠️ No database parts found.');
+    console.log('⚠️ No database parts found. Searched in:', possibleDirs);
     return null;
   }
 
-  console.log(`🔧 Merging ${partFiles.length} database parts...`);
+  console.log(`🔧 Merging ${partFiles.length} database parts from ${partsDir}...`);
   const chunks = partFiles.map(f => readFileSync(join(partsDir, f)));
   const merged = Buffer.concat(chunks);
+
+  // Pastikan direktori tujuan ada
+  const dbDir = dirname(DB_PATH);
+  if (!existsSync(dbDir)) {
+    mkdirSync(dbDir, { recursive: true });
+  }
+
   writeFileSync(DB_PATH, merged);
 
   console.log(`✅ Database merged: ${(merged.length / 1024 / 1024).toFixed(1)} MB`);
