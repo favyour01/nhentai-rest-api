@@ -200,6 +200,7 @@
 
   <script>
     async function runSearch() {
+      console.log('runSearch called');
       const q = document.getElementById('searchInput').value.trim();
       const resultDiv = document.getElementById('demoResult');
       if (!q) return;
@@ -207,7 +208,10 @@
       resultDiv.innerHTML = '<div class="demo-placeholder"><span>⏳ Loading...</span></div>';
 
       try {
-        const res = await fetch(`/api/v2/search?q=${encodeURIComponent(q)}&limit=5`);
+        const url = `/api/v2/search?q=${encodeURIComponent(q)}&limit=5`;
+        console.log('Fetching:', url);
+        const res = await fetch(url);
+        console.log('Response status:', res.status);
 
         // Check if response is JSON (SSO redirect returns HTML)
         const contentType = res.headers.get('content-type');
@@ -217,6 +221,7 @@
         }
 
         const json = await res.json();
+        console.log('JSON received, success:', json.success, 'items:', json.data?.length);
 
         if (!json.success || !json.data.length) {
           resultDiv.innerHTML = '<div class="demo-placeholder"><span>No results found</span></div>';
@@ -227,7 +232,7 @@
         json.data.forEach(item => {
           html += `
             <div class="result-item">
-              <div class="result-id">#${item.id}</div>
+              <div class="result-id">#${item.ID}</div>
               <div class="result-info">
                 <div class="result-title">${escapeHtml(item.CLEAN_TITLE || item.EN_TITLE || item.JP_TITLE || 'Untitled')}</div>
                 <div class="result-meta">
@@ -244,6 +249,7 @@
         html += `<div class="results-footer">Found ${json.pagination.total.toLocaleString()} results</div>`;
         resultDiv.innerHTML = html;
       } catch (err) {
+        console.error('Search error:', err);
         resultDiv.innerHTML = `<div class="demo-placeholder"><span>❌ Error: ${err.message}</span></div>`;
       }
     }
