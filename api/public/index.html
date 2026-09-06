@@ -208,6 +208,14 @@
 
       try {
         const res = await fetch(`/api/v2/search?q=${encodeURIComponent(q)}&limit=5`);
+
+        // Check if response is JSON (SSO redirect returns HTML)
+        const contentType = res.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+          resultDiv.innerHTML = '<div class="demo-placeholder"><span>🔒 API protected. Please disable Vercel Deployment Protection in project settings.</span></div>';
+          return;
+        }
+
         const json = await res.json();
 
         if (!json.success || !json.data.length) {

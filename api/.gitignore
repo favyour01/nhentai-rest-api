@@ -10,3 +10,4 @@ data/database.db-wal
 !data/.gitkeep
 
 .vercel
+.env*
