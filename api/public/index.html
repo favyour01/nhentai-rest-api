@@ -229,11 +229,11 @@
             <div class="result-item">
               <div class="result-id">#${item.id}</div>
               <div class="result-info">
-                <div class="result-title">${escapeHtml(item.clean_title || item.en_title || item.jp_title || 'Untitled')}</div>
+                <div class="result-title">${escapeHtml(item.CLEAN_TITLE || item.EN_TITLE || item.JP_TITLE || 'Untitled')}</div>
                 <div class="result-meta">
-                  <span>🎨 ${escapeHtml(item.artist || 'Unknown')}</span>
-                  <span>🌐 ${escapeHtml(item.language || 'N/A')}</span>
-                  <span>📄 ${item.pages || 0} pages</span>
+                  <span>🎨 ${escapeHtml(item.ARTIST || 'Unknown')}</span>
+                  <span>🌐 ${escapeHtml(item.LANGUAGE || 'N/A')}</span>
+                  <span>📄 ${item.PAGES || 0} pages</span>
                   <span>📅 ${item.upload_date ? item.upload_date.split('T')[0] : 'N/A'}</span>
                 </div>
               </div>
