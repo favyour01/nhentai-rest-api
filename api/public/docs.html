@@ -45,6 +45,13 @@
         <a href="#tags" class="sidebar-link">GET /api/v2/tags</a>
         <a href="#artists" class="sidebar-link">GET /api/v2/artists</a>
         <a href="#stats" class="sidebar-link">GET /api/v2/stats</a>
+        <a href="#live-search" class="sidebar-link">⚡ Live Search</a>
+        <a href="#fetch-id" class="sidebar-link">GET /api/v2/fetch/:id</a>
+        <a href="#fetch-batch" class="sidebar-link">POST /api/v2/fetch/batch</a>
+        <a href="#scraper" class="sidebar-link">🔄 Auto-Scraper</a>
+        <a href="#scrape-id" class="sidebar-link">GET /api/v2/scrape/:id</a>
+        <a href="#scrape-batch" class="sidebar-link">POST /api/v2/scrape/batch</a>
+        <a href="#cache-stats" class="sidebar-link">GET /api/v2/cache/stats</a>
         <a href="#health" class="sidebar-link">GET /api/health</a>
 
         <h4>Examples</h4>
@@ -66,9 +73,12 @@
         <section id="intro">
           <h2>Introduction</h2>
           <p>
-            This is an unofficial REST API for accessing nhentai doujin data. The API is read-only and serves data
-            from a local SQLite database containing over <strong>678,000 doujins</strong> spanning from 2014 to 2026.
+            This is an unofficial REST API for accessing nhentai doujin data. The API serves data
+            from a local SQLite database with <strong>real-time auto-scraping</strong> from nhentai.net for missing/incomplete data.
           </p>
+          <div class="info-box">
+            <strong>⚡ Real-time Updates:</strong> The API automatically fetches complete data from nhentai.net when requested data is missing or incomplete. Only complete records (with media_id, thumbnails, etc.) are stored in the database.
+          </div>
           <div class="info-box">
             <strong>⚠️ Disclaimer:</strong> This API is unofficial and not affiliated with nhentai.net.
             Data is provided for educational and research purposes only.
@@ -79,7 +89,7 @@
         <section id="base-url">
           <h2>Base URL</h2>
           <div class="code-block">
-            <code>https://api-lkj0pl4nd-akatsuki.vercel.app</code>
+            <code>https://api-ao1hjzaox-akatsuki.vercel.app</code>
           </div>
           <p>
             All API endpoints are prefixed with <code>/api/v2</code>. An alias <code>/v2</code> is also available.
@@ -305,7 +315,7 @@
 <pre>{
   "success": true,
   "data": {
-    "total_doujins": 678517,
+    "total_doujins": 3264,
     "languages": [
       { "LANGUAGE": "japanese", "count": 400000 },
       { "LANGUAGE": "english", "count": 150000 }
@@ -319,6 +329,64 @@
     }
   }
 }</pre>
+          </div>
+        </section>
+
+        <!-- Live Search -->
+        <section id="live-search" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/live-search</code>
+          </div>
+          <p>Search doujins directly from nhentai.net in real-time. Returns complete data with media_id and thumbnails.</p>
+
+          <h4>Query Parameters</h4>
+          <table class="params-table">
+            <thead>
+              <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+            </thead>
+            <tbody>
+              <tr><td><code>q</code></td><td>string</td><td>Search term (required)</td></tr>
+              <tr><td><code>limit</code></td><td>integer</td><td>Max results (default: 20, max: 50)</td></tr>
+            </tbody>
+          </table>
+
+          <h4>Example Request</h4>
+          <div class="code-block">
+            <code>GET /api/v2/live-search?q=school&limit=10</code>
+          </div>
+        </section>
+
+        <!-- Fetch and Save -->
+        <section id="fetch-id" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method get">GET</span>
+            <code class="endpoint-path">/api/v2/fetch/:id</code>
+          </div>
+          <p>Fetch a doujin from nhentai.net and save to database if complete (has media_id).</p>
+
+          <h4>Example Request</h4>
+          <div class="code-block">
+            <code>GET /api/v2/fetch/12345</code>
+          </div>
+        </section>
+
+        <!-- Batch Fetch -->
+        <section id="fetch-batch" class="endpoint-section">
+          <div class="endpoint-header">
+            <span class="method post">POST</span>
+            <code class="endpoint-path">/api/v2/fetch/batch</code>
+          </div>
+          <p>Fetch multiple doujins and save complete ones to database (max 20 IDs).</p>
+
+          <div class="code-block">
+<pre>POST /api/v2/fetch/batch
+Content-Type: application/json
+
+{ "ids": [39, 55, 59, 75, 76] }</pre>
+          </div>
+          <div class="warning-box">
+            <strong>⚠️ Note:</strong> Each fetch has a 10-second delay to avoid rate limits. Batch of 20 will take ~3.5 minutes.
           </div>
         </section>
 
@@ -337,6 +405,106 @@
   "timestamp": "2026-09-05T12:00:00.000Z",
   "version": "2.0.0"
 }</pre>
+          </div>
+        </section>
+
+        <!-- Auto-Scraper -->
+        <h1 class="endpoints-title">🔄 Auto-Scraper (Real-time Data Enrichment)</h1>
+        <p class="info-text">API ini dilengkapi dengan <strong>auto-scraper</strong> yang secara otomatis melengkapi data yang tidak lengkap (JP_TITLE, ARTIST, TAGS, PAGES, UPLOAD_DATE, dll) dengan scrape real-time dari nhentai.net.</p>
+        
+        <div class="info-box">
+          <strong>💡 Cara Kerja:</strong>
+          <ul style="margin: 0.5rem 0 0 1.5rem;">
+            <li>Saat Anda request <code>GET /api/v2/:id</code>, API akan mengecek apakah data di database lengkap</li>
+            <li>Jika ada field yang kosong (null/kosong), API akan otomatis scrape dari nhentai.net</li>
+            <li>Hasil scrape di-cache di memory (LRU cache, max 10.000 entries) untuk menghindari scrape berulang</li>
+            <li>Setiap request berikutnya untuk ID yang sama akan menggunakan cache</li>
+            <li>Scrape dilakukan via Cloudflare IP untuk memastikan koneksi stabil</li>
+          </ul>
+        </div>
+
+        <section id="scraper" class="endpoint-section">
+          <h3>Auto-Enrich (Default Aktif)</h3>
+          <p>Semua endpoint <code>GET /api/v2/:id</code> dan <code>GET /api/v2/random</code> secara otomatis mengembalikan data lengkap.</p>
+          <div class="code-block">
+<pre><span class="comment"># Data yang tadinya tidak lengkap akan otomatis terisi (real-time scrape)</span>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/39"</span>
+
+<span class="comment">// Response:</span>
+{
+  "success": true,
+  "data": {
+    "ID": 39,
+    "EN_TITLE": "[YUUKI ARISU] Akuma no Batsu...",
+    "JP_TITLE": "...",           <span class="comment">// ← Terisi otomatis!</span>
+    "ARTIST": "yuuki alice",    <span class="comment">// ← Terisi otomatis!</span>
+    "TAGS": "group, lolicon",   <span class="comment">// ← Terisi otomatis!</span>
+    "cover_url": "https://t.nhentai.net/galleries/814/cover.jpg",
+    "thumbnail_url": "https://t.nhentai.net/galleries/814/thumb.jpg"
+  },
+  "meta": {
+    "enriched": true,
+    "scraped": true
+  }
+}</pre>
+          </div>
+        </section>
+
+        <section id="scrape-id" class="endpoint-section">
+          <h3>Manual Scrape by ID</h3>
+          <p>Trigger manual scrape untuk ID tertentu.</p>
+          <div class="code-block">
+<pre>GET /api/v2/scrape/:id</pre>
+          </div>
+          <div class="code-block">
+<pre><span class="comment"># Example</span>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/scrape/12345"</span>
+
+<span class="comment">// Response berisi: existing data, scraped data, dan merged data</span></pre>
+          </div>
+        </section>
+
+        <section id="scrape-batch" class="endpoint-section">
+          <h3>Batch Scrape</h3>
+          <p>Scrape multiple IDs sekaligus (max 50 IDs per request).</p>
+          <div class="code-block">
+<pre>POST /api/v2/scrape/batch
+Content-Type: application/json
+
+{ "ids": [39, 55, 59, 75, 76] }</pre>
+          </div>
+        </section>
+
+        <section id="cache-stats" class="endpoint-section">
+          <h3>Cache Statistics</h3>
+          <p>Melihat status cache scraper.</p>
+          <div class="code-block">
+<pre>GET /api/v2/cache/stats
+POST /api/v2/cache/clear</pre>
+          </div>
+          <div class="code-block">
+<pre><span class="comment">// Cache stats response:</span>
+{
+  "success": true,
+  "data": {
+    "scrapeCache": 150,
+    "notFoundCache": 23,
+    "queueLength": 0,
+    "activeRequests": 1
+  }
+}</pre>
+          </div>
+        </section>
+
+        <section id="search-enrich" class="endpoint-section">
+          <h3>Search with Enrich</h3>
+          <p>Tambahkan parameter <code>enrich=true</code> di search untuk auto-enrich semua hasil.</p>
+          <div class="code-block">
+<pre><span class="comment"># Search dengan auto-enrich</span>
+GET /api/v2/search?q=school&enrich=true&limit=10</pre>
+          </div>
+          <div class="warning-box">
+            <strong>⚠️ Perhatian:</strong> Menggunakan enrich=true pada search akan memperlambat response karena setiap hasil di-scrape. Gunakan hanya jika diperlukan.
           </div>
         </section>
 
@@ -369,7 +537,7 @@ console.log(json.data);</pre>
 <pre><span class="keyword">import</span> requests
 
 <span class="comment"># Search for doujins</span>
-res = requests.get(<span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/search"</span>, params={
+res = requests.get(<span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/search"</span>, params={
     <span class="string">"q"</span>: <span class="string">"school"</span>,
     <span class="string">"lang"</span>: <span class="string">"english"</span>,
     <span class="string">"limit"</span>: <span class="string">"10"</span>
@@ -378,7 +546,7 @@ data = res.json()
 <span class="keyword">print</span>(data[<span class="string">"data"</span>])
 
 <span class="comment"># Get by ID</span>
-res = requests.get(<span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/12345"</span>)
+res = requests.get(<span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/12345"</span>)
 <span class="keyword">print</span>(res.json()[<span class="string">"data"</span>])</pre>
           </div>
         </section>
@@ -387,16 +555,22 @@ res = requests.get(<span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.a
           <h3>cURL</h3>
           <div class="code-block">
 <pre><span class="comment"># Search</span>
-curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/search?q=girls&limit=5"</span>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/search?q=girls&limit=5"</span>
 
-<span class="comment"># Get by ID</span>
-curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/12345"</span>
+<span class="comment"># Get by ID (with auto-enrich)</span>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/12345"</span>
 
 <span class="comment"># Random</span>
-curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/random"</span>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/random"</span>
+
+<span class="comment"># Live search from nhentai</span>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/live-search?q=school"</span>
+
+<span class="comment"># Fetch and save</span>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/fetch/12345"</span>
 
 <span class="comment"># Stats</span>
-curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/stats"</span></pre>
+curl <span class="string">"https://api-ao1hjzaox-akatsuki.vercel.app/api/v2/stats"</span></pre>
           </div>
         </section>
 

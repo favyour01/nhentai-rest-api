@@ -18,10 +18,14 @@ export function ensureDb() {
   }
 
   // Tentukan sumber parts
-  const partsDir = process.env.VERCEL ? DATA_DIR : DATA_DIR;
+  const partsDir = DATA_DIR;
   const partFiles = readdirSync(partsDir)
     .filter(f => f.startsWith('database.part'))
-    .sort((a, b) => parseInt(a.split('part')[-1]) - parseInt(b.split('part')[-1]));
+    .sort((a, b) => {
+      const numA = parseInt(a.replace('database.part', ''));
+      const numB = parseInt(b.replace('database.part', ''));
+      return numA - numB;
+    });
 
   if (partFiles.length === 0) {
     console.log('⚠️ No database parts found.');
@@ -29,7 +33,6 @@ export function ensureDb() {
   }
 
   console.log(`🔧 Merging ${partFiles.length} database parts...`);
-
   const chunks = partFiles.map(f => readFileSync(join(partsDir, f)));
   const merged = Buffer.concat(chunks);
   writeFileSync(DB_PATH, merged);

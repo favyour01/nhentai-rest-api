@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import apiRouter from './routes/api.js';
+import backfillRouter from './routes/backfill.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -35,6 +36,9 @@ app.use(express.static(join(__dirname, '..', 'public')));
 // API Routes
 app.use('/api/v2', apiRouter);
 app.use('/v2', apiRouter); // Alias
+
+// Backfill routes
+app.use('/api/v2/backfill', backfillRouter);
 
 // Health check
 app.get('/api/health', (req, res) => {
