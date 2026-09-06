@@ -74,16 +74,16 @@ Server runs at `http://localhost:3000`
 
 ```bash
 # Search for doujins
-curl "https://your-domain.vercel.app/api/v2/search?q=school&lang=english&limit=10"
+curl "https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/search?q=school&lang=english&limit=10"
 
 # Get doujin by ID
-curl "https://your-domain.vercel.app/api/v2/12345"
+curl "https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/12345"
 
 # Get random doujin
-curl "https://your-domain.vercel.app/api/v2/random"
+curl "https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/random"
 
 # Get stats
-curl "https://your-domain.vercel.app/api/v2/stats"
+curl "https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/stats"
 ```
 
 ```javascript

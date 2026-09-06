@@ -24,7 +24,7 @@
    - Output Directory: (kosongkan, biarkan default)
    - Klik **Deploy**
 
-3. **Selesai!** API akan live di `https://your-project.vercel.app`
+3. **Selesai!** API akan live di `https://api-lkj0pl4nd-akatsuki.vercel.app`
 
 ### Via Vercel CLI
 
@@ -37,10 +37,10 @@ vercel --prod
 
 | Endpoint | URL |
 |----------|-----|
-| Landing | `https://your-project.vercel.app/` |
-| Docs | `https://your-project.vercel.app/docs` |
-| API | `https://your-project.vercel.app/api/v2/...` |
-| Health | `https://your-project.vercel.app/api/health` |
+| Landing | `https://api-lkj0pl4nd-akatsuki.vercel.app/` |
+| Docs | `https://api-lkj0pl4nd-akatsuki.vercel.app/docs` |
+| API | `https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/...` |
+| Health | `https://api-lkj0pl4nd-akatsuki.vercel.app/api/health` |
 
 ## Catatan Penting
 

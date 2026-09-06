@@ -79,7 +79,7 @@
         <section id="base-url">
           <h2>Base URL</h2>
           <div class="code-block">
-            <code>https://your-domain.vercel.app</code>
+            <code>https://api-lkj0pl4nd-akatsuki.vercel.app</code>
           </div>
           <p>
             All API endpoints are prefixed with <code>/api/v2</code>. An alias <code>/v2</code> is also available.
@@ -369,7 +369,7 @@ console.log(json.data);</pre>
 <pre><span class="keyword">import</span> requests
 
 <span class="comment"># Search for doujins</span>
-res = requests.get(<span class="string">"https://your-domain.vercel.app/api/v2/search"</span>, params={
+res = requests.get(<span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/search"</span>, params={
     <span class="string">"q"</span>: <span class="string">"school"</span>,
     <span class="string">"lang"</span>: <span class="string">"english"</span>,
     <span class="string">"limit"</span>: <span class="string">"10"</span>
@@ -378,7 +378,7 @@ data = res.json()
 <span class="keyword">print</span>(data[<span class="string">"data"</span>])
 
 <span class="comment"># Get by ID</span>
-res = requests.get(<span class="string">"https://your-domain.vercel.app/api/v2/12345"</span>)
+res = requests.get(<span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/12345"</span>)
 <span class="keyword">print</span>(res.json()[<span class="string">"data"</span>])</pre>
           </div>
         </section>
@@ -387,16 +387,16 @@ res = requests.get(<span class="string">"https://your-domain.vercel.app/api/v2/1
           <h3>cURL</h3>
           <div class="code-block">
 <pre><span class="comment"># Search</span>
-curl <span class="string">"https://your-domain.vercel.app/api/v2/search?q=girls&limit=5"</span>
+curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/search?q=girls&limit=5"</span>
 
 <span class="comment"># Get by ID</span>
-curl <span class="string">"https://your-domain.vercel.app/api/v2/12345"</span>
+curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/12345"</span>
 
 <span class="comment"># Random</span>
-curl <span class="string">"https://your-domain.vercel.app/api/v2/random"</span>
+curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/random"</span>
 
 <span class="comment"># Stats</span>
-curl <span class="string">"https://your-domain.vercel.app/api/v2/stats"</span></pre>
+curl <span class="string">"https://api-lkj0pl4nd-akatsuki.vercel.app/api/v2/stats"</span></pre>
           </div>
         </section>
 
